@@ -1,0 +1,517 @@
+<mat-toolbar
+  style="
+    height: 32px;
+    width: 20%;
+    background-color: rgb(209, 209, 209);
+    margin-bottom: 60px;
+  "
+>
+  <mat-label class="fill-remaining-space" style="font-size: 16px"
+    >Đơn hàng</mat-label
+  >
+</mat-toolbar>
+<div>
+  <div style="">
+    <button
+      [disabled]="this.selection['_selected'] == null"
+      mat-stroked-button
+      color="warn"
+      style="height: 40px"
+      (click)="delete()"
+    >
+      <mat-icon style="font-size: 20px"> delete</mat-icon>Xóa
+    </button>
+    <mat-form-field appearance="standard" style="width: 30%; margin-left: 20px">
+      <mat-label>Search</mat-label>
+      <input
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ex. Nhut Anh"
+        #input
+      />
+    </mat-form-field>
+  </div>
+
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="mode($event)">
+    <mat-tab label="Chờ xử lý ({{ dataSource.filteredData.length }})">
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" #TableSort="matSort" matSort>
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()"
+              >
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox
+                (click)="$event.stopPropagation()"
+                (change)="$event ? selection.toggle(row) : null"
+                [checked]="selection.isSelected(row)"
+              >
+              </mat-checkbox>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.date | date: "d/M/yyyy, h:mm:ss a" }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Mã đơn hàng
+            </th>
+            <td mat-cell *matCellDef="let row">{{ row.orderId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tên</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="form-name-table" fxLayout="flex">
+                <img src="{{ row.img }}" alt="avatar" />
+                <p>{{ row.name }}</p>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Giá</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.price }}
+              <span style="font-size: 10px; margin: 3px"> (VND)</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="address">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              style="width: 25%"
+            >
+              Địa chỉ
+            </th>
+            <td mat-cell *matCellDef="let row">{{ row.address }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              style="margin-left: 10px"
+              mat-sort-header
+            >
+              Trạng thái
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                style="
+                  background: rgba(255, 251, 14, 0.5);
+                  padding: 10px;
+                  font-weight: 500;
+
+                  border-radius: 20%; ;
+                "
+              >
+                {{ row.status }}</span
+              >
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+            <td
+              mat-cell
+              fxLayout="flex"
+              style="padding-top: 15px"
+              *matCellDef="let row"
+              (click)="editMode(row.id)"
+            >
+              <mat-icon
+                style="
+                  color: rgb(70, 70, 255);
+                  cursor: pointer;
+                  font-size: 20px;
+                  margin-bottom: 10px;
+                "
+                matTooltip="Chỉnh sửa"
+                >edit</mat-icon
+              >
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              Không có dữ liệu "{{ input.value }}"
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          #paginator
+          [pageSizeOptions]="[10, 20, 25, 100]"
+          aria-label="Select page of users"
+        ></mat-paginator>
+      </div>
+    </mat-tab>
+    <mat-tab label="Đang giao ({{ dataSource1.filteredData.length }})">
+      <div class="mat-elevation-z8">
+        <table
+          mat-table
+          [dataSource]="dataSource1"
+          #TableOneSort="matSort"
+          matSort
+        >
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()"
+              >
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox
+                (click)="$event.stopPropagation()"
+                (change)="$event ? selection.toggle(row) : null"
+                [checked]="selection.isSelected(row)"
+              >
+              </mat-checkbox>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.date | date: "d/M/yyyy, h:mm:ss a" }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Mã đơn hàng
+            </th>
+            <td mat-cell *matCellDef="let row">{{ row.orderId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tên</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="form-name-table" fxLayout="flex">
+                <img src="{{ row.img }}" alt="avatar" />
+                <p>{{ row.name }}</p>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Giá</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.price }}
+              <span style="font-size: 10px; margin: 3px"> (VND)</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Địa chỉ</th>
+            <td mat-cell *matCellDef="let row">{{ row.address }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Trạng thái
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                style="
+                  background: rgba(255, 151, 14, 0.5);
+                  padding: 10px;
+                  font-weight: 500;
+                  border-radius: 20%; ;
+                "
+              >
+                {{ row.status }}</span
+              >
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+            <td
+              mat-cell
+              fxLayout="flex"
+              style="padding-top: 15px"
+              *matCellDef="let row"
+              (click)="editMode(row.id)"
+            >
+              <mat-icon
+                style="
+                  color: rgb(70, 70, 255);
+                  cursor: pointer;
+                  font-size: 20px;
+                  padding-bottom: 10px;
+                "
+                matTooltip="Chỉnh sửa"
+                >edit</mat-icon
+              >
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              Không có dữ liệu "{{ input.value }}"
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          #paginator1
+          [pageSizeOptions]="[10, 20, 25, 100]"
+          aria-label="Select page of users"
+        ></mat-paginator>
+      </div>
+    </mat-tab>
+    <mat-tab label="Đã giao ({{ dataSource2.filteredData.length }})">
+      <div class="mat-elevation-z8">
+        <table
+          mat-table
+          [dataSource]="dataSource2"
+          #TableTwoSort="matSort"
+          matSort
+        >
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()"
+              >
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox
+                (click)="$event.stopPropagation()"
+                (change)="$event ? selection.toggle(row) : null"
+                [checked]="selection.isSelected(row)"
+              >
+              </mat-checkbox>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.date | date: "d/M/yyyy, h:mm:ss a" }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Mã đơn hàng
+            </th>
+            <td mat-cell *matCellDef="let row">{{ row.orderId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tên</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="form-name-table" fxLayout="flex">
+                <img src="{{ row.img }}" alt="avatar" />
+                <p>{{ row.name }}</p>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Giá</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.price }}
+              <span style="font-size: 10px; margin: 3px"> (VND)</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Địa chỉ</th>
+            <td mat-cell *matCellDef="let row">{{ row.address }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Trạng thái
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                style="
+                  background: rgba(110, 255, 14, 0.5);
+                  padding: 10px;
+                  font-weight: 500;
+                  border-radius: 20%; ;
+                "
+              >
+                {{ row.status }}</span
+              >
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+            <td
+              mat-cell
+              fxLayout="flex"
+              style="padding-top: 15px"
+              *matCellDef="let row"
+              (click)="editMode(row.id)"
+            >
+              <mat-icon
+                style="
+                  color: rgb(70, 70, 255);
+                  cursor: pointer;
+                  font-size: 20px;
+                  padding-bottom: 10px;
+                "
+                matTooltip="Chỉnh sửa"
+                >edit</mat-icon
+              >
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              Không có dữ liệu "{{ input.value }}"
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          #paginator2
+          [pageSizeOptions]="[10, 20, 25, 100]"
+          aria-label="Select page of users"
+        ></mat-paginator>
+      </div>
+    </mat-tab>
+    <mat-tab label="Đã hủy ({{ dataSource3.filteredData.length }})">
+      <div class="mat-elevation-z8">
+        <table
+          mat-table
+          [dataSource]="dataSource3"
+          #TableThreeSort="matSort"
+          matSort
+        >
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()"
+              >
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox
+                (click)="$event.stopPropagation()"
+                (change)="$event ? selection.toggle(row) : null"
+                [checked]="selection.isSelected(row)"
+              >
+              </mat-checkbox>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.date | date: "d/M/yyyy, h:mm:ss a" }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Mã đơn hàng
+            </th>
+            <td mat-cell *matCellDef="let row">{{ row.orderId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tên</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="form-name-table" fxLayout="flex">
+                <img src="{{ row.img }}" alt="avatar" />
+                <p>{{ row.name }}</p>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Giá</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.price }}
+              <span style="font-size: 10px; margin: 3px"> (VND)</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Địa chỉ</th>
+            <td mat-cell *matCellDef="let row">{{ row.address }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Trạng thái
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                style="
+                  background: rgba(255, 14, 14, 0.5);
+                  padding: 10px;
+                  font-weight: 500;
+                  border-radius: 20%; ;
+                "
+              >
+                {{ row.status }}</span
+              >
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+            <td
+              mat-cell
+              fxLayout="flex"
+              style="padding-top: 15px"
+              *matCellDef="let row"
+              (click)="editMode(row.id)"
+            >
+              <mat-icon
+                style="
+                  color: rgb(70, 70, 255);
+                  cursor: pointer;
+                  font-size: 20px;
+                  padding-bottom: 10px;
+                "
+                matTooltip="Chỉnh sửa"
+                >edit</mat-icon
+              >
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              Không có dữ liệu "{{ input.value }}"
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          #paginator3
+          [pageSizeOptions]="[10, 20, 25, 100]"
+          aria-label="Select page of users"
+        ></mat-paginator>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

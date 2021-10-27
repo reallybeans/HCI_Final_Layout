@@ -1,1 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.form-name-table {
+  height: calc(100% - 30px);
+
+  img {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+  }
+
+  p {
+    color: rgb(0, 119, 255);
+    margin: auto 10px;
+  }
+}
+
+.mat-icon:hover {
+  opacity: 0.6;
+}

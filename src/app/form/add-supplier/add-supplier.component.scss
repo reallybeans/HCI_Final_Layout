@@ -1,0 +1,28 @@
+:host {
+  .mat-card {
+    width: 52%;
+  }
+}
+
+.container {
+  padding: 10px;
+  width: 100%;
+}
+
+.form {
+  min-width: 250px;
+}
+
+.form-element {
+  padding: 5px 0px 25px 2px;
+  width: 100%;
+}
+
+.back-icon {
+  position: absolute;
+  top: 5%;
+  left: 95%;
+}
+.button{
+    float: right;
+}

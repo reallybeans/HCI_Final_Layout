@@ -1,0 +1,127 @@
+<mat-toolbar
+  style="
+    height: 32px;
+    width: 20%;
+    background-color: rgb(209, 209, 209);
+    margin-bottom: 80px;
+  "
+>
+  <mat-label class="fill-remaining-space" style="font-size: 16px"
+    >Chỉnh sửa order</mat-label
+  >
+</mat-toolbar>
+<mat-card>
+  <form class="example-container" [formGroup]="formGroup">
+    <div class="container" novalidate fxLayout="flex" fxLayoutGap="20px">
+      <div class="left">
+        <h1>Đơn hàng</h1>
+        <div class="container-left">
+          <div class="form-label">
+            <mat-label>Ngày Đặt</mat-label>
+            <h3>{{ user.date | date: "dd-MM-yyyy" }}</h3>
+          </div>
+          <div class="form-label">
+            <mat-label>Mã đơn hàng</mat-label>
+            <h3>{{ user.orderId }}</h3>
+          </div>
+        </div>
+        <div class="form-label">
+          <mat-label>Địa chỉ giao hàng</mat-label>
+          <h3>{{ user.address }}</h3>
+        </div>
+        <div *ngIf="user.note" class="form-label">
+          <mat-label>Lý do hủy</mat-label>
+          <h3>{{ user.note }}</h3>
+        </div>
+        <mat-form-field
+          style="display: disable; pointer-events: none"
+          appearance="fill"
+          floatLabel="always"
+        >
+          <mat-label>Tổng hóa đơn</mat-label>
+          <input
+            matInput
+            type="number"
+            class="example-right-align"
+            placeholder="{{ user.price }}"
+          />
+          <span style="color: black; font-size: 12px" matSuffix>VND</span>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Trạng thái</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="Chờ xử lý">Chờ xử lý</mat-option>
+            <mat-option value="Đang giao">Đang giao</mat-option>
+            <mat-option value="Đã giao">Đã giao</mat-option>
+            <mat-option value="Đã hủy">Đã hủy</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="right">
+        <h1>Khách hàng</h1>
+        <div class="container-left">
+          <div class="form-label">
+            <mat-label>Tên</mat-label>
+            <h3 style="color: rgb(79, 53, 226)">{{ user.name }}</h3>
+          </div>
+          <div class="form-label">
+            <mat-label>Số điện thoại</mat-label>
+            <h3>{{ user.phone }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 20px">
+      <div class="container-items">
+        <h3 style="width: 40%">Tên sản phẩm</h3>
+        <h3 style="width: 20%">Đơn giá</h3>
+        <h3 style="width: 20%">Số lượng</h3>
+        <h3 style="width: 20%">Thành tiền</h3>
+      </div>
+      <br />
+      <ng-container *ngFor="let data of data">
+        <div class="container-item">
+          <h3 style="width: 40%">{{ data.name }}</h3>
+          <h3 style="width: 20%">{{ data.price }} VND</h3>
+          <h3 style="width: 20%; float: right">01</h3>
+          <h3 style="width: 20%">{{ data.price }} VND</h3>
+          <mat-divider style="width: 90%; margin-left: 20px"></mat-divider>
+          <br />
+        </div>
+      </ng-container>
+      <mat-divider style="width: 90%; margin-left: 20px"></mat-divider>
+      <div class="container-item">
+        <h3 style="width: 80%; font-weight: bold">Phí giao hàng</h3>
+        <h3 style="width: 20%">miễn phí</h3>
+      </div>
+      <mat-divider style="width: 90%; margin-left: 20px"></mat-divider>
+      <div class="container-item">
+        <h3 style="width: 80%; font-weight: bold">Tổng</h3>
+        <h3 style="width: 20%">{{user.price}}</h3>
+      </div>
+    </div>
+  </form>
+  <a class="back-icon" routerLink="/main/orders"
+    ><mat-icon>arrow_back</mat-icon></a
+  >
+  <div class="container-button">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="edit()"
+      style="margin-top: 20px; width: 22%; margin-right: 900px"
+    >
+      <mat-icon>save</mat-icon> Edit
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="delete()"
+      style="margin-top: 20px; width: 22%;"
+    >
+      <mat-icon>delete</mat-icon> Delete
+    </button>
+  </div>
+</mat-card>
+

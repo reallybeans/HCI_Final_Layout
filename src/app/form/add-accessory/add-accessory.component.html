@@ -1,0 +1,78 @@
+<mat-toolbar
+  style="
+    height: 32px;
+    width: 20%;
+    background-color: rgb(209, 209, 209);
+    margin-bottom: 80px;
+  "
+>
+  <mat-label class="fill-remaining-space" style="font-size: 16px"
+    >Thêm Linh kiện</mat-label
+  >
+</mat-toolbar>
+<mat-card>
+  <div class="container" novalidate>
+    <form
+      [formGroup]="formGroup"
+      class="form"
+      fxLayout="flex"
+      fxLayoutGap="20px"
+    >
+      <div class="left">
+        <mat-form-field class="form-element">
+          <input matInput placeholder="Tên" formControlName="name" />
+        </mat-form-field>
+        <mat-form-field class="form-element">
+          <textarea
+            matInput
+            placeholder="Miêu tả"
+            formControlName="discription"
+          ></textarea>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Loại</mat-label>
+          <mat-select formControlName="category">
+            <mat-option value="Màn hình">Màn hình</mat-option>
+            <mat-option value="Vỏ PC">Vỏ PC</mat-option>
+            <mat-option value="RAM">RAM</mat-option>
+            <mat-option value="Quạt tản nhiệt">Quạt tản nhiệt</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="example-right-align">
+          <mat-label>Nhà cung cấp</mat-label>
+          <mat-select formControlName="supplier">
+            <mat-option value="Phong vũ">Phong vũ</mat-option>
+            <mat-option value="Gear VN">Gear VN</mat-option>
+            <mat-option value="Khôi Computer">Khôi Compute</mat-option>
+            <mat-option value="Tài PC">Tài PC</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+          class="example-right-align"
+          appearance="fill"
+          floatLabel="always"
+        >
+          <mat-label>Trạng thái</mat-label>
+          <input matInput placeholder="Giá" formControlName="price" />
+          <span style="color: black; font-size: 12px" matSuffix>VND</span>
+        </mat-form-field>
+
+        <div class="form-element">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="add()"
+            class="button"
+            [disabled]="!formGroup.valid"
+          >
+            THÊM
+          </button>
+        </div>
+      </div>
+    </form>
+    <a class="back-icon" routerLink="/main/accessories"
+      ><mat-icon>arrow_back</mat-icon></a
+    >
+  </div>
+</mat-card>

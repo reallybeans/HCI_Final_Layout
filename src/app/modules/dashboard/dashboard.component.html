@@ -1,0 +1,119 @@
+<mat-toolbar style="height: 32px; width: 20%; background-color: rgb(209, 209, 209)">
+  <mat-label class="fill-remaining-space" style="font-size: 16px"
+    >Quản lí chung</mat-label
+  >
+</mat-toolbar>
+<div>
+  <app-simple-column [data]="bigChart"></app-simple-column>
+</div>
+<br />
+<mat-divider></mat-divider>
+<br />
+<div
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+  fxLayoutGap="20px"
+  class="stats-card"
+>
+  <mat-card fxFlex="33">
+    <app-widget-card
+      [data]="card"
+      label="Doanh thu tháng 10"
+      total="87,000,000 VND"
+      icon="attach_money"
+    ></app-widget-card
+  ></mat-card>
+  <mat-card fxFlex="33">
+    <app-widget-card
+      [data]="card"
+      label="Đơn hàng mới"
+      total="10"
+      icon="shopping_cart"
+    ></app-widget-card
+  ></mat-card>
+  <mat-card fxFlex="33">
+    <app-widget-card
+      [data]="card"
+      label="Người dùng"
+      total="2.5K"
+      icon="account_box"
+    ></app-widget-card
+  ></mat-card>
+</div>
+<br />
+<mat-divider> </mat-divider>
+<br />
+<div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px">
+  <div fxFlex="60">
+    <mat-toolbar
+      style="height: 32px; width: 30%; background-color: rgb(245, 244, 244)"
+    >
+      <mat-label class="fill-remaining-space" style="font-size: 16px"
+        >Đơn hàng chờ được xử lý</mat-label
+      >
+    </mat-toolbar>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Ngày đặt hàng</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.date | date: "dd/MM/yyyy HH:mm:ss" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Tên</th>
+          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="orderId">
+          <th mat-header-cell *matHeaderCellDef>Mã đơn Hàng</th>
+          <td mat-cell *matCellDef="let element">{{ element.orderId }}</td>
+        </ng-container>
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Giá</th>
+          <td mat-cell *matCellDef="let element">{{ element.price }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef style="padding-left: 5px">
+            Trạng thái
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <span
+              style="
+                background: rgba(255, 251, 14, 0.5);
+                padding: 10px;
+                font-weight: 500;
+
+                border-radius: 20%; ;
+              "
+            >
+              {{ row.status }}</span
+            >
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+          <td mat-cell *matCellDef="let row" (click)="editMode(row.id)">
+            <mat-icon
+              style="color: red; cursor: pointer"
+              matTooltip="Xem chi tiết"
+              >details</mat-icon
+            >
+          </td>
+        </ng-container>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Chọn trang"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+  <div fxFlex="40">
+    <app-widget-pie [data]="pie"></app-widget-pie>
+  </div>
+</div>
